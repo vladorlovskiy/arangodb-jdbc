@@ -1,6 +1,6 @@
 # ArangoDB JDBC Driver
 
-A JDBC driver implementation for ArangoDB that allows you to use standard JDBC APIs to interact with ArangoDB databases.
+A JDBC driver implementation for ArangoDB that wraps [Official ArangoDB Java Driver](https://github.com/arangodb/arangodb-java-driver), and allows you to use standard JDBC APIs to interact with ArangoDB databases.
 
 ## Features
 
@@ -147,6 +147,10 @@ Examples:
 - `jdbc:arangodb://localhost:8529/_system`
 - `jdbc:arangodb://192.168.1.100:8529/mydb`
 - `jdbc:arangodb://arangodb.example.com:8529/production`
+
+## Connection Properties
+
+A comprehensive list of all supported connection properties, along with detailed descriptions and examples, can be found in the [JDBC_CONNECTION_PROPERTIES.md](./JDBC_CONNECTION_PROPERTIES.md) file.
 
 ## Supported Features
 

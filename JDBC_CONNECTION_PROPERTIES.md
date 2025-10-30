@@ -103,7 +103,7 @@ jdbc:arangodb://localhost:8529/mydb
 ### jdbcMetadataSampleSize
 - **Type:** Integer
 - **Default:** `1000`
-- **Description:** Number of documents to sample when gathering metadata
+- **Description:** Number of documents to sample when gathering column metadata
 - **Example:** `jdbcMetadataSampleSize=5000`
 
 ### jdbcSchemaName
