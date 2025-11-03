@@ -61,7 +61,7 @@ public class ArangoDbCursorResultSet<T> implements ResultSet {
                 this.columnTypes = new int[columnNames.length];
                 for (int i = 0; i < columnNames.length; i++) {
                     Object value = firstRowMap.get(columnNames[i]);
-                    this.columnTypes[i] = getSqlType(value);
+                    this.columnTypes[i] = ArangoDbJdbcUtils.getSqlType(value);
                 }
             } else if (this.firstRow instanceof BaseDocument) {
                 BaseDocument firstRowDocument = (BaseDocument) this.firstRow;
@@ -69,7 +69,7 @@ public class ArangoDbCursorResultSet<T> implements ResultSet {
                 this.columnTypes = new int[columnNames.length];
                 for (int i = 0; i < columnNames.length; i++) {
                     Object value = firstRowDocument.getProperties().get(columnNames[i]);
-                    this.columnTypes[i] = getSqlType(value);
+                    this.columnTypes[i] = ArangoDbJdbcUtils.getSqlType(value);
                 }
             } else {
                 throw new SQLException("First row is not a map or base document");
@@ -83,26 +83,6 @@ public class ArangoDbCursorResultSet<T> implements ResultSet {
         }
     }
     
-    private int getSqlType(Object value) {
-        if (value == null) {
-            return Types.NULL;
-        } else if (value instanceof String) {
-            return Types.VARCHAR;
-        } else if (value instanceof Integer) {
-            return Types.INTEGER;
-        } else if (value instanceof Long) {
-            return Types.BIGINT;
-        } else if (value instanceof Double || value instanceof Float) {
-            return Types.DOUBLE;
-        } else if (value instanceof Boolean) {
-            return Types.BOOLEAN;
-        } else if (value instanceof java.util.Date) {
-            return Types.TIMESTAMP;
-        } else {
-            return Types.OTHER;
-        }
-    }
-
     @Override
     public boolean next() throws SQLException {
         checkClosed();
@@ -138,131 +118,91 @@ public class ArangoDbCursorResultSet<T> implements ResultSet {
     public String getString(int columnIndex) throws SQLException {
         Object value = getValue(columnIndex);
         wasNull = (value == null);
-        return value != null ? value.toString() : null;
+        return ArangoDbJdbcUtils.asString(value);
     }
 
     @Override
     public boolean getBoolean(int columnIndex) throws SQLException {
         Object value = getValue(columnIndex);
         wasNull = (value == null);
-        if (value == null) return false;
-        if (value instanceof Boolean) return (Boolean) value;
-        if (value instanceof String) return Boolean.parseBoolean((String) value);
-        return false;
+        return ArangoDbJdbcUtils.asBoolean(value);
     }
 
     @Override
     public byte getByte(int columnIndex) throws SQLException {
         Object value = getValue(columnIndex);
         wasNull = (value == null);
-        if (value == null) return 0;
-        if (value instanceof Number) return ((Number) value).byteValue();
-        if (value instanceof String) return Byte.parseByte((String) value);
-        return 0;
+        return ArangoDbJdbcUtils.asByte(value);
     }
 
     @Override
     public short getShort(int columnIndex) throws SQLException {
         Object value = getValue(columnIndex);
         wasNull = (value == null);
-        if (value == null) return 0;
-        if (value instanceof Number) return ((Number) value).shortValue();
-        if (value instanceof String) return Short.parseShort((String) value);
-        return 0;
+        return ArangoDbJdbcUtils.asShort(value);
     }
 
     @Override
     public int getInt(int columnIndex) throws SQLException {
         Object value = getValue(columnIndex);
         wasNull = (value == null);
-        if (value == null) return 0;
-        if (value instanceof Number) return ((Number) value).intValue();
-        if (value instanceof String) return Integer.parseInt((String) value);
-        return 0;
+        return ArangoDbJdbcUtils.asInt(value);
     }
 
     @Override
     public long getLong(int columnIndex) throws SQLException {
         Object value = getValue(columnIndex);
         wasNull = (value == null);
-        if (value == null) return 0;
-        if (value instanceof Number) return ((Number) value).longValue();
-        if (value instanceof String) return Long.parseLong((String) value);
-        return 0;
+        return ArangoDbJdbcUtils.asLong(value);
     }
 
     @Override
     public float getFloat(int columnIndex) throws SQLException {
         Object value = getValue(columnIndex);
         wasNull = (value == null);
-        if (value == null) return 0;
-        if (value instanceof Number) return ((Number) value).floatValue();
-        if (value instanceof String) return Float.parseFloat((String) value);
-        return 0;
+        return ArangoDbJdbcUtils.asFloat(value);
     }
 
     @Override
     public double getDouble(int columnIndex) throws SQLException {
         Object value = getValue(columnIndex);
         wasNull = (value == null);
-        if (value == null) return 0;
-        if (value instanceof Number) return ((Number) value).doubleValue();
-        if (value instanceof String) return Double.parseDouble((String) value);
-        return 0;
+        return ArangoDbJdbcUtils.asDouble(value);
     }
 
     @Override
     public BigDecimal getBigDecimal(int columnIndex, int scale) throws SQLException {
         Object value = getValue(columnIndex);
         wasNull = (value == null);
-        if (value == null) return null;
-        if (value instanceof BigDecimal) return (BigDecimal) value;
-        if (value instanceof Number) return new BigDecimal(((Number) value).doubleValue());
-        if (value instanceof String) return new BigDecimal((String) value);
-        return null;
+        return ArangoDbJdbcUtils.asBigDecimal(value);
     }
 
     @Override
     public byte[] getBytes(int columnIndex) throws SQLException {
         Object value = getValue(columnIndex);
         wasNull = (value == null);
-        if (value == null) return null;
-        if (value instanceof byte[]) return (byte[]) value;
-        if (value instanceof String) return ((String) value).getBytes();
-        return null;
+        return ArangoDbJdbcUtils.asBytes(value);
     }
 
     @Override
     public Date getDate(int columnIndex) throws SQLException {
         Object value = getValue(columnIndex);
         wasNull = (value == null);
-        if (value == null) return null;
-        if (value instanceof Date) return (Date) value;
-        if (value instanceof java.util.Date) return new Date(((java.util.Date) value).getTime());
-        if (value instanceof String) return Date.valueOf((String) value);
-        return null;
+        return ArangoDbJdbcUtils.asDate(value);
     }
 
     @Override
     public Time getTime(int columnIndex) throws SQLException {
         Object value = getValue(columnIndex);
         wasNull = (value == null);
-        if (value == null) return null;
-        if (value instanceof Time) return (Time) value;
-        if (value instanceof java.util.Date) return new Time(((java.util.Date) value).getTime());
-        if (value instanceof String) return Time.valueOf((String) value);
-        return null;
+        return ArangoDbJdbcUtils.asTime(value);
     }
 
     @Override
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
         Object value = getValue(columnIndex);
         wasNull = (value == null);
-        if (value == null) return null;
-        if (value instanceof Timestamp) return (Timestamp) value;
-        if (value instanceof java.util.Date) return new Timestamp(((java.util.Date) value).getTime());
-        if (value instanceof String) return Timestamp.valueOf((String) value);
-        return null;
+        return ArangoDbJdbcUtils.asTimestamp(value);
     }
 
     @Override
